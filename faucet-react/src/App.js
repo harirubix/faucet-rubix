@@ -20,7 +20,7 @@ function App() {
     }
 
     try {
-      const response = await fetch('http://localhost:3001/increment', {
+      const response = await fetch('http://103.209.145.177:3001/increment', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

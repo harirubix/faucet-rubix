@@ -65,7 +65,7 @@ const initializeCounter = async () => {
 app.use(express.json());
 app.use(cors({
     origin: 'http://103.209.145.177:3000',
-    methods: ['GET', 'POST'],
+    methods: ['GET', 'POST','OPTIONS'],
     allowedHeaders: ['Content-Type'],
 }));
 // Security headers
@@ -73,11 +73,18 @@ app.use(helmet());
 
 // Rate limiter for the /increment endpoint
 const limiter = rateLimit({
-    windowMs: 60 * 60 * 1000, // 1 hour
-    max: 100, // Limit each IP to 100 requests per windowMs
+    windowMs: 60 * 60 * 1000, // 60 Mins
+    max: 200, // Limit each IP to 200 requests per windowMs
     message: 'Too many requests from this IP, please try again later.',
 });
-app.use('/increment', limiter);
+app.use('/increment', (req, res, next) => {
+    const source_ip = req.ip; // Get the requester's IP address
+    if (source_ip === '103.209.145.177') {
+        next(); // Skip the rate limiter for this IP
+    } else {
+        limiter(req, res, next); // Apply the rate limiter
+    }
+});
 
 // Increment the counter and save it to the file
 app.post('/increment', async (req, res) => {
@@ -214,7 +221,7 @@ app.post('/increment', async (req, res) => {
 
 // Start the server after initializing the counter
 initializeCounter().then(() => {
-    app.listen(port, () => {
+    app.listen(port,'0.0.0.0', () => {
         console.log(`Server is running on http://localhost:${port}`);
     });
 }).catch(err => {
