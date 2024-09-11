@@ -5,7 +5,6 @@ function App() {
   const [username, setUsername] = useState('');
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState('');
-
   const submitUsername = async () => {
     if (!username) {
       setMessage('Please enter DID.');
@@ -42,6 +41,7 @@ function App() {
       setMessageType('error')
     }
   };
+  // console.log(userDetails,username )
 
   return (
     <div className="container">
